@@ -31,6 +31,9 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/Backend_MuhammadArfassyaSetyadi" />
   </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="ProjectErrors" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 7
 }</component>
@@ -51,6 +54,19 @@
     &quot;last_opened_file_path&quot;: &quot;C:/Users/setya/Downloads/Backend_MuhammadArfassyaSetyadi&quot;
   }
 }</component>
+  <component name="RunManager">
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="Backend_MuhammadArfassyaSetyadi" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="Backend_MuhammadArfassyaSetyadi" />
+      <option name="filePath" />
+      <method v="2" />
+    </configuration>
+  </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="96e6640a-4deb-4c4e-9a5e-2d6af54e96d8" name="Changes" comment="" />
