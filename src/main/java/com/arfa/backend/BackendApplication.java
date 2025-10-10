@@ -1,13 +1,13 @@
-package com.joyride.be_modul5;
+package com.arfa.backend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class BeModul5Application {
+public class BackendApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(BeModul5Application.class, args);
+        SpringApplication.run(BackendApplication.class, args);
     }
 
 }

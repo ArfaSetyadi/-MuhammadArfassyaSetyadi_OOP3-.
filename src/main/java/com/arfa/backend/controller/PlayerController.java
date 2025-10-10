@@ -1,12 +1,11 @@
-package com.joyride.be_modul5.Controller;
+package com.arfa.backend.controller;
 
-import com.joyride.be_modul5.Model.Player;
-import com.joyride.be_modul5.Service.PlayerService;
+import com.arfa.backend.model.Player;
+import com.arfa.backend.service.PlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;

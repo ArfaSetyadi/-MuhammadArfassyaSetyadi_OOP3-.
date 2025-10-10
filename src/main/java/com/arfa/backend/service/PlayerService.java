@@ -4,7 +4,6 @@ import com.arfa.backend.model.Player;
 import com.arfa.backend.repository.PlayerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -38,9 +37,7 @@ public class PlayerService {
         Player existingPlayer = playerRepository.findById(playerId)
                 .orElseThrow(() -> new RuntimeException("Player not found with ID: " + playerId));
 
-        // Update only non-null fields
         if (updatedPlayer.getUsername() != null) {
-            // Check if new username is already taken by another player
             if (!existingPlayer.getUsername().equals(updatedPlayer.getUsername())
                     && playerRepository.existsByUsername(updatedPlayer.getUsername())) {
                 throw new RuntimeException("Username already exists: " + updatedPlayer.getUsername());
@@ -70,7 +67,6 @@ public class PlayerService {
         playerRepository.deleteById(playerId);
     }
 
-
     public void deletePlayerByUsername(String username) {
         Player player = playerRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Player not found with username: " + username));
@@ -81,10 +77,7 @@ public class PlayerService {
         Player player = playerRepository.findById(playerId)
                 .orElseThrow(() -> new RuntimeException("Player not found with ID: " + playerId));
 
-        // Update high score if this score is higher
         player.updateHighScore(scoreValue);
-
-        // Add coins and distance to totals
         player.addCoins(coinsCollected);
         player.addDistance(distanceTravelled);
 
@@ -92,8 +85,11 @@ public class PlayerService {
     }
 
     public List<Player> getLeaderboardByHighScore(int limit) {
-        return playerRepository.findTopPlayersByHighScore(limit);
+        List<Player> players = playerRepository.findTopPlayersByHighScore();
+        if (limit <= 0 || players.size() <= limit) return players;
+        return players.subList(0, limit);
     }
+
 
     public List<Player> getLeaderboardByTotalCoins() {
         return playerRepository.findAllByOrderByTotalCoinsDesc();
