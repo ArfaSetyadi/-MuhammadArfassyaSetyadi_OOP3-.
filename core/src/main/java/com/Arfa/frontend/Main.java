@@ -3,57 +3,71 @@ package com.Arfa.frontend;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.ScreenUtils;
 
 public class Main extends ApplicationAdapter {
 
-    ShapeRenderer shape;
-    float x, y;
-    float size = 50;
+    private ShapeRenderer shapeRenderer;
+    private Player player;
+    private Ground ground;
+    private GameManager gameManager;
 
-    Color[] colors = {Color.RED, Color.YELLOW, Color.BLUE};
-    int colorIndex = 0;
+    private OrthographicCamera camera;
+    private float cameraOffset = 0.2f;
 
     @Override
     public void create() {
-        shape = new ShapeRenderer();
+        shapeRenderer = new ShapeRenderer();
+        gameManager = GameManager.getInstance();
 
-        x = Gdx.graphics.getWidth() / 2f - size / 2f;
-        y = Gdx.graphics.getHeight() / 2f - size / 2f;
+        camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        camera.setToOrtho(false);
+
+        player = new Player(new Vector2(100, Gdx.graphics.getHeight() / 2f));
+        ground = new Ground();
+
+        gameManager.startGame();
     }
 
     @Override
     public void render() {
-        Gdx.gl.glClearColor(0, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        float delta = Gdx.graphics.getDeltaTime();
+        update(delta);
 
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D))
-            x += 3;
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A))
-            x -= 3;
-        if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W))
-            y += 3;
-        if (Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S))
-            y -= 3;
+        ScreenUtils.clear(0.1f, 0.1f, 0.15f, 1);
 
-        x = Math.max(0, Math.min(x, Gdx.graphics.getWidth() - size));
-        y = Math.max(0, Math.min(y, Gdx.graphics.getHeight() - size));
+        shapeRenderer.setProjectionMatrix(camera.combined);
 
-        if (Gdx.input.justTouched()) {
-            colorIndex = (colorIndex + 1) % colors.length;
-            System.out.println("Color changed to: " + colors[colorIndex]);
-        }
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        ground.renderShape(shapeRenderer);
+        player.renderShape(shapeRenderer);
+        shapeRenderer.end();
+    }
 
-        shape.begin(ShapeRenderer.ShapeType.Filled);
-        shape.setColor(colors[colorIndex]);
-        shape.rect(x, y, size, size);
-        shape.end();
+    private void update(float delta) {
+        boolean isFlying = Gdx.input.isKeyPressed(Input.Keys.SPACE);
+
+        player.update(delta, isFlying);
+        player.checkBoundaries(ground, Gdx.graphics.getHeight());
+
+        updateCamera(delta);
+
+        ground.update(camera.position.x);
+        
+        gameManager.setScore((int) player.getDistanceTraveled());
+    }
+
+    private void updateCamera(float delta) {
+        float cameraFocus = player.getPosition().x + (cameraOffset * player.getWidth());
+        camera.position.x = cameraFocus;
+        camera.update();
     }
 
     @Override
     public void dispose() {
-        shape.dispose();
+        shapeRenderer.dispose();
     }
 }
