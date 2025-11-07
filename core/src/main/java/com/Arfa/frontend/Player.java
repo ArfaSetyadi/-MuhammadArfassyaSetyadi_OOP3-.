@@ -20,13 +20,19 @@ public class Player {
     private float baseSpeed = 300f;
     private float distanceTraveled = 0f;
 
+    private boolean isDead = false;
+    private final Vector2 startPosition;
+
     public Player(Vector2 startPosition) {
+        this.startPosition = new Vector2(startPosition);
         this.position = new Vector2(startPosition);
         this.velocity = new Vector2(baseSpeed, 0);
         this.collider = new Rectangle(position.x, position.y, width, height);
     }
 
     public void update(float delta, boolean isFlying) {
+        if (isDead) return;
+
         updateDistanceAndSpeed(delta);
         updatePosition(delta);
         applyGravity(delta);
@@ -51,12 +57,8 @@ public class Player {
         velocity.y -= gravity * delta;
         velocity.x = baseSpeed;
 
-        if (velocity.y > maxVerticalSpeed) {
-            velocity.y = maxVerticalSpeed;
-        }
-        if (velocity.y < -maxVerticalSpeed) {
-            velocity.y = -maxVerticalSpeed;
-        }
+        if (velocity.y > maxVerticalSpeed) velocity.y = maxVerticalSpeed;
+        if (velocity.y < -maxVerticalSpeed) velocity.y = -maxVerticalSpeed;
     }
 
     private void fly(float delta) {
@@ -68,7 +70,6 @@ public class Player {
     }
 
     public void checkBoundaries(Ground ground, float ceilingY) {
-        // Ground collision
         if (ground.isColliding(collider)) {
             position.y = ground.getTopY();
             velocity.y = 0;
@@ -84,6 +85,25 @@ public class Player {
         shapeRenderer.setColor(1f, 0.4f, 0.4f, 1f);
         shapeRenderer.rect(position.x, position.y, width, height);
     }
+
+
+    public void die() {
+        isDead = true;
+        velocity.set(0, 0);
+    }
+
+    public void reset() {
+        isDead = false;
+        position.set(startPosition);
+        velocity.set(baseSpeed, 0);
+        distanceTraveled = 0f;
+        updateCollider();
+    }
+
+    public boolean isDead() {
+        return isDead;
+    }
+
 
     public Vector2 getPosition() {
         return position;

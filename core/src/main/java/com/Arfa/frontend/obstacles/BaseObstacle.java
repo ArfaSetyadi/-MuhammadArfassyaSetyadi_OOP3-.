@@ -8,7 +8,7 @@ public abstract class BaseObstacle {
     protected Vector2 position;
     protected Rectangle collider;
     protected float length;
-    protected final float WIDTH;
+    protected final float WIDTH = 10f;
     protected boolean active = false;
 
     public BaseObstacle(Vector2 startPosition, int length){
@@ -17,28 +17,44 @@ public abstract class BaseObstacle {
         updateCollider();
     }
 
-    public void  initialize(Vector2 startPosition, int length){
+    public void initialize(Vector2 startPosition, int length){
         this.position = startPosition;
         this.length = length;
         updateCollider();
     }
 
     public void render(ShapeRenderer shapeRenderer){
-        if (active = active){
+        if (active) {
             drawShape(shapeRenderer);
         }
     }
+
     public boolean isColliding(Rectangle playerCollider){
-        if (active = active && collider.collides( playerCollider)){
-            return true;
-        }
-            return false;
+        return active && collider.overlaps(playerCollider);
+    }
+
+    public boolean isActive(){
+        return active;
     }
 
     public boolean isOffScreenCamera(float cameraLeftEdge){
-        return position.x + getRenderWidth() <cameraLeftEdge - 100;
-
+        return position.x + getRenderWidth() < cameraLeftEdge - 100;
     }
-    protected updateCollider();
-    protected drawShape(shapeRenderer);
+
+    public void setActive(boolean active){
+        this.active = active;
+    }
+
+    public void setPosition(float x, float y){
+        this.position.set(x, y);
+        updateCollider();
+    }
+
+    public Vector2 getPosition(){
+        return position;
+    }
+
+    protected abstract void updateCollider();
+    protected abstract void drawShape(ShapeRenderer shapeRenderer);
+    protected abstract float getRenderWidth();
 }

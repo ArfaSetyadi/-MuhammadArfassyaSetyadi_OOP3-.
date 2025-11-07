@@ -1,0 +1,50 @@
+package com.Arfa.frontend.factories;
+
+import com.badlogic.gdx.math.Vector2;
+import com.Arfa.frontend.obstacles.BaseObstacle;
+import com.Arfa.frontend.obstacles.HomingMissile;
+import com.Arfa.frontend.pools.HomingMissilePool;
+
+import java.util.List;
+import java.util.Random;
+
+public class HomingMissileCreator implements ObstacleFactory.ObstacleCreator {
+
+    private final HomingMissilePool pool = new HomingMissilePool();
+
+    @Override
+    public BaseObstacle create(float groundTopY, float spawnX, float playerHeight, Random rng) {
+
+        float randomY = groundTopY + rng.nextFloat() * (playerHeight * 4);
+
+        return pool.obtain(new Vector2(spawnX, randomY));
+    }
+
+    @Override
+    public void release(BaseObstacle obstacle) {
+        if (obstacle instanceof HomingMissile missile) {
+            pool.release(missile);
+        }
+    }
+
+    @Override
+    public void releaseAll() {
+        pool.releaseAll();
+    }
+
+    @Override
+    public List<HomingMissile> getInUse() {
+        return pool.getInUse();
+    }
+
+    @Override
+    public boolean supports(BaseObstacle obstacle) {
+        return obstacle instanceof HomingMissile;
+    }
+
+    @Override
+    public String getName() {
+        return "HomingMissile";
+    }
+}
+
