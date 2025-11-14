@@ -6,25 +6,21 @@ import com.badlogic.gdx.math.Vector2;
 import com.Arfa.frontend.Player;
 
 public class HomingMissile extends BaseObstacle {
-
     private Player target;
     private Vector2 velocity;
     private float speed = 200f;
-
     private float width = 40f;
     private float height = 20f;
 
     public HomingMissile(Vector2 startPosition) {
-        super(startPosition, 0);
+        super(startPosition,0);
         this.velocity = new Vector2();
-        updateCollider();
     }
 
     @Override
     public void initialize(Vector2 startPosition, int length) {
         super.initialize(startPosition, length);
-        velocity.set(0, 0);
-        target = null;
+        this.velocity.set(0, 0);
     }
 
     public void setTarget(Player target) {
@@ -33,29 +29,22 @@ public class HomingMissile extends BaseObstacle {
 
     public boolean isTargetingPlayer() {
         if (target == null) return false;
-
-        float missileCenterX = position.x + width / 2f;
         float playerCenterX = target.getPosition().x + target.getWidth() / 2f;
-
-        return missileCenterX < playerCenterX;
+        float missileCenterX = position.x + width / 2f;
+        return playerCenterX <= missileCenterX;
     }
 
     public void update(float delta) {
-        if (!active || target == null) return;
+        if (target == null || !active) return;
 
         if (isTargetingPlayer()) {
-            Vector2 targetPos = new Vector2(
-                target.getPosition().x,
-                target.getPosition().y + target.getHeight() / 2f
-            );
-
-            velocity.set(targetPos).sub(position).nor().scl(speed);
-
-            position.x += velocity.x * delta;
-            position.y += velocity.y * delta;
-
-            updateCollider();
+            Vector2 targetPosition = target.getPosition(); // Ambil Posisi Player
+            velocity.set(targetPosition).sub(position).nor().scl(speed); // Mengatur velocity untuk mendekati player
         }
+
+        // Always move with current velocity
+        position.add(velocity.x * delta, velocity.y * delta);
+        updateCollider();
     }
 
     @Override

@@ -1,20 +1,20 @@
 package com.Arfa.frontend.pools;
 
-import com.Arfa.frontend.obstacles.HomingMissile;
 import com.badlogic.gdx.math.Vector2;
+import com.Arfa.frontend.obstacles.HomingMissile;
 
 public class HomingMissilePool extends ObjectPool<HomingMissile> {
 
     @Override
     protected HomingMissile createObject() {
-        return new HomingMissile(new Vector2(0, 0));
+        return new HomingMissile(new Vector2());
     }
 
     @Override
     protected void resetObject(HomingMissile missile) {
+        missile.setActive(false);
         missile.setPosition(0, 0);
         missile.setTarget(null);
-        missile.setActive(false);
     }
 
     public HomingMissile obtain(Vector2 position) {
@@ -24,4 +24,3 @@ public class HomingMissilePool extends ObjectPool<HomingMissile> {
         return missile;
     }
 }
-
