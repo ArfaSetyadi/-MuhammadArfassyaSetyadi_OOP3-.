@@ -13,70 +13,46 @@ public class Player {
     private Rectangle collider;
     private float width = 64f;
     private float height = 64f;
-
-    // Speed system
     private float baseSpeed = 300f;
     private float distanceTraveled = 0f;
-
-    // Death system
     private boolean isDead = false;
     private Vector2 startPosition;
+    private boolean pendingFly = false;
 
     public Player(Vector2 startPosition) {
         this.startPosition = new Vector2(startPosition);
-        position = new Vector2(startPosition);
-
-        collider = new Rectangle(
-            position.x,
-            position.y,
-            width,
-            height
-        );
+        this.position = new Vector2(startPosition);
+        collider = new Rectangle(position.x, position.y, width, height);
         velocity = new Vector2(baseSpeed, 0);
     }
 
-    public void update(float delta, boolean isFlying) {
+    public void update(float delta, boolean isFlyingInput) {
         if (!isDead) {
-            updateDistanceAndSpeed(delta);
+            distanceTraveled += velocity.x * delta;
             applyGravity(delta);
-            if (isFlying) {
+            if (isFlyingInput || pendingFly) {
                 fly(delta);
+                pendingFly = false;
             }
-            updatePosition(delta);
+            position.x += velocity.x * delta;
+            position.y += velocity.y * delta;
         }
         updateCollider();
     }
 
-
-    private void updateDistanceAndSpeed(float delta) {
-        // Track distance traveled
-        distanceTraveled += velocity.x * delta;
+    public void fly() {
+        if (!isDead) pendingFly = true;
     }
 
-    private void updatePosition(float delta) {
-        // Move forward constantly
-        position.x += velocity.x * delta;
-        // Apply vertical movement (gravity/jetpack)
-        position.y += velocity.y * delta;
+    public void fly(float delta) {
+        if (!isDead) velocity.y += force * delta;
     }
 
     private void applyGravity(float delta) {
         velocity.y -= gravity * delta;
-        // Keep forward speed constant with current speed
         velocity.x = baseSpeed;
-
-        // Clamp vertical velocity to max speed
-        if (velocity.y < -maxVerticalSpeed) {
-            velocity.y = -maxVerticalSpeed;
-        } else if (velocity.y > maxVerticalSpeed) {
-            velocity.y = maxVerticalSpeed;
-        }
-    }
-
-    public void fly(float delta) {
-        if (!isDead) {
-            velocity.y += force * delta;
-        }
+        if (velocity.y < -maxVerticalSpeed) velocity.y = -maxVerticalSpeed;
+        if (velocity.y > maxVerticalSpeed) velocity.y = maxVerticalSpeed;
     }
 
     private void updateCollider() {
@@ -84,20 +60,16 @@ public class Player {
     }
 
     public void checkBoundaries(Ground ground, float ceilingY) {
-        // Ground collision
         if (ground.isColliding(collider)) {
             position.y = ground.getTopY();
             velocity.y = 0;
         }
-
-        // Ceiling collision
         if (position.y + height > ceilingY) {
             position.y = ceilingY - height;
             velocity.y = 0;
         }
     }
 
-    // Debug
     public void renderShape(ShapeRenderer shapeRenderer) {
         shapeRenderer.setColor(0f, 1f, 0f, 1f);
         shapeRenderer.rect(position.x, position.y, width, height);
@@ -116,18 +88,22 @@ public class Player {
         distanceTraveled = 0f;
     }
 
-    // Getters
+    public boolean isDead() {
+        return isDead;
+    }
+
     public Vector2 getPosition() {
         return position;
+    }
+
+    public float getHeight() {
+        return height;
     }
 
     public float getWidth() {
         return width;
     }
 
-    public float getHeight() {
-        return height;
-    }
 
     public Rectangle getCollider() {
         return collider;
@@ -135,9 +111,5 @@ public class Player {
 
     public float getDistanceTraveled() {
         return distanceTraveled / 10f;
-    }
-
-    public boolean isDead() {
-        return isDead;
     }
 }
