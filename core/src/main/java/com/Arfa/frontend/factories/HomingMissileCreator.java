@@ -1,37 +1,42 @@
 package com.Arfa.frontend.factories;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.math.Vector2;
-import com.Arfa.frontend.obstacles.BaseObstacle;
 import com.Arfa.frontend.obstacles.HomingMissile;
-import com.Arfa.frontend.pools.HomingMissilePool;
-import java.util.List;
-import java.util.Random;
+import com.Arfa.frontend.obstacles.BaseObstacle;
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
-class HomingMissileCreator implements ObstacleFactory.ObstacleCreator {
-    private final HomingMissilePool pool = new HomingMissilePool();
+public class HomingMissileCreator implements ObstacleFactory.ObstacleCreator {
+    private final List<HomingMissile> inUse = new CopyOnWriteArrayList<>();
 
     @Override
     public BaseObstacle create(float groundTopY, float spawnX, float playerHeight, Random rng) {
-        float randomY = groundTopY + rng.nextFloat() * (Gdx.graphics.getHeight() - groundTopY);
-        return pool.obtain(new Vector2(spawnX, randomY));
+        HomingMissile m = new HomingMissile(spawnX, groundTopY + 150f, 300f);
+        inUse.add(m);
+        return m;
     }
 
     @Override
     public void release(BaseObstacle obstacle) {
-        if (obstacle instanceof HomingMissile) pool.release((HomingMissile) obstacle);
+        inUse.remove(obstacle);
     }
 
     @Override
-    public void releaseAll() { pool.releaseAll(); }
+    public void releaseAll() {
+        inUse.clear();
+    }
 
     @Override
-    public List<HomingMissile> getInUse() { return pool.getInUse(); }
+    public List<HomingMissile> getInUse() {
+        return inUse;
+    }
 
     @Override
-    public boolean supports(BaseObstacle obstacle) { return obstacle instanceof HomingMissile; }
+    public boolean supports(BaseObstacle obstacle) {
+        return obstacle instanceof HomingMissile;
+    }
 
     @Override
-    public String getName() { return "HomingMissile"; }
+    public String getName() {
+        return "HomingMissile";
+    }
 }
-

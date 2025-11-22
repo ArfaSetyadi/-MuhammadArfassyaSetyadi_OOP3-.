@@ -1,62 +1,54 @@
 package com.Arfa.frontend.obstacles;
 
+import com.Arfa.frontend.Player;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
 
 public abstract class BaseObstacle {
-    protected Vector2 position;
+    protected float x;
+    protected float y;
+    protected float width;
+    protected float height;
+
     protected Rectangle collider;
-    protected float length;
-    protected final float WIDTH = 10;
-    protected boolean active = false;
+    protected float speedMultiplier = 1f;
 
-    public BaseObstacle(Vector2 startPosition, int length) {
-        this.position = new Vector2(startPosition);
-        this.length = length;
-        updateCollider();
+    protected BaseObstacle(float x, float y, float w, float h) {
+        this.x = x;
+        this.y = y;
+        this.width = w;
+        this.height = h;
+        this.collider = new Rectangle(x, y, w, h);
     }
 
-    public void initialize(Vector2 startPosition, int length) {
-        this.position.set(startPosition);
-        this.length = length;
-        updateCollider();
+    public abstract void update(float delta);
+
+    public void update(float delta, Player player) {
+        update(delta);
     }
 
-    public void render(ShapeRenderer shapeRenderer) {
-        if (!active) return;
-        drawShape(shapeRenderer);
+    public abstract void render(ShapeRenderer s);
+
+    public boolean isColliding(Rectangle other) {
+        return collider.overlaps(other);
     }
 
-    public boolean isColliding(Rectangle playerCollider) {
-        return active && collider.overlaps(playerCollider);
-    }
-
-    // Check if obstacle is behind the camera (off-screen to the left)
     public boolean isOffScreenCamera(float cameraLeftEdge) {
-        return position.x + getRenderWidth() < cameraLeftEdge - 100; // Buffer behind camera
+        return x + width < cameraLeftEdge - 50f;
     }
 
-    public void setActive(boolean active) {
-        this.active = active;
+    public Rectangle getCollider() {
+        return collider;
     }
 
-    public boolean isActive() {
-        return active;
+    public float getX() { return x; }
+    public float getY() { return y; }
+
+    protected void updateCollider() {
+        collider.setPosition(x, y);
     }
 
-    public void setPosition(float x, float y) {
-        position.set(x, y);
-        updateCollider();
+    public void setSpeedMultiplier(float m) {
+        this.speedMultiplier = m;
     }
-
-    public Vector2 getPosition() {
-        return position;
-    }
-
-    protected abstract void updateCollider(); // Abstract method for specific collider update
-
-    protected abstract void drawShape(ShapeRenderer shapeRenderer); // Abstract method for specific drawing
-
-    protected abstract float getRenderWidth(); // Abstract method for specific render width
 }

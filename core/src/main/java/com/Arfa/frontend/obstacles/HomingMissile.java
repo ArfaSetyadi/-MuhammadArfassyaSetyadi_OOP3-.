@@ -1,64 +1,44 @@
 package com.Arfa.frontend.obstacles;
 
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
 import com.Arfa.frontend.Player;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public class HomingMissile extends BaseObstacle {
-    private Player target;
-    private Vector2 velocity;
-    private float speed = 200f;
-    private float width = 40f;
-    private float height = 20f;
 
-    public HomingMissile(Vector2 startPosition) {
-        super(startPosition,0);
-        this.velocity = new Vector2();
+    private float speed;
+    private Player target;
+
+    public HomingMissile(float x, float y, float speed) {
+        super(x, y, 32f, 16f);
+        this.speed = speed;
+    }
+
+    public void setTarget(Player p) {
+        this.target = p;
     }
 
     @Override
-    public void initialize(Vector2 startPosition, int length) {
-        super.initialize(startPosition, length);
-        this.velocity.set(0, 0);
+    public void update(float delta, Player player) {
+        this.target = player;
+        update(delta);
     }
 
-    public void setTarget(Player target) {
-        this.target = target;
-    }
-
-    public boolean isTargetingPlayer() {
-        if (target == null) return false;
-        float playerCenterX = target.getPosition().x + target.getWidth() / 2f;
-        float missileCenterX = position.x + width / 2f;
-        return playerCenterX <= missileCenterX;
-    }
-
+    @Override
     public void update(float delta) {
-        if (target == null || !active) return;
 
-        if (isTargetingPlayer()) {
-            Vector2 targetPosition = target.getPosition(); // Ambil Posisi Player
-            velocity.set(targetPosition).sub(position).nor().scl(speed); // Mengatur velocity untuk mendekati player
+        if (target != null) {
+            float targetY = target.getPosition().y + target.getHeight() / 2f;
+            float dy = targetY - (y + height / 2f);
+            float vy = Math.signum(dy) * speed * 0.5f * delta;
+            y += vy;
         }
 
-        // Always move with current velocity
-        position.add(velocity.x * delta, velocity.y * delta);
+        x -= speed * 0.8f * speedMultiplier * delta;
         updateCollider();
     }
 
     @Override
-    protected void updateCollider() {
-        collider = new Rectangle(position.x, position.y, width, height);
-    }
-
-    @Override
-    protected void drawShape(ShapeRenderer shapeRenderer) {
-        shapeRenderer.rect(position.x, position.y, width, height);
-    }
-
-    @Override
-    protected float getRenderWidth() {
-        return width;
+    public void render(ShapeRenderer s) {
+        s.rect(x, y, width, height);
     }
 }

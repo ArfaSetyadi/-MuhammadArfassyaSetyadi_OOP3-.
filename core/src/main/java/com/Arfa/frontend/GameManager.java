@@ -2,13 +2,17 @@ package com.Arfa.frontend;
 
 import com.Arfa.frontend.observers.Observer;
 import com.Arfa.frontend.observers.ScoreManager;
+import com.Arfa.frontend.strategies.MediumDifficultyStrategy;
+import com.Arfa.frontend.strategies.DifficultyStrategy;
 
 public class GameManager {
     private static GameManager instance;
     private final ScoreManager scoreManager;
+    private DifficultyStrategy difficultyStrategy;
 
     private GameManager() {
         scoreManager = new ScoreManager();
+        difficultyStrategy = new MediumDifficultyStrategy();
     }
 
     public static GameManager getInstance() {
@@ -34,5 +38,13 @@ public class GameManager {
 
     public void removeObserver(Observer o) {
         scoreManager.removeObserver(o);
+    }
+
+    public void setDifficultyStrategy(DifficultyStrategy strategy) {
+        if (strategy != null) difficultyStrategy = strategy;
+    }
+
+    public DifficultyStrategy getDifficultyStrategy() {
+        return difficultyStrategy;
     }
 }

@@ -1,31 +1,26 @@
 package com.Arfa.frontend.obstacles;
 
+import com.Arfa.frontend.Player;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
 
 public class VerticalLaser extends BaseObstacle {
-    public VerticalLaser(Vector2 startPosition, int length) {
-        super(startPosition, length);
+
+    public VerticalLaser(float x, float y) {
+        super(x, y, 12f, 200f);
     }
 
     @Override
-    public void initialize(Vector2 startPosition, int length) {
-        super.initialize(startPosition, length);
+    public void update(float delta) {
+        updateCollider();
     }
 
     @Override
-    protected void updateCollider() {
-        collider = new Rectangle(position.x, position.y, WIDTH, length);
+    public void update(float delta, Player player) {
+        update(delta);
     }
 
     @Override
-    protected void drawShape(ShapeRenderer shapeRenderer) {
-        shapeRenderer.rect(position.x, position.y, WIDTH, length);
-    }
-
-    @Override
-    protected float getRenderWidth() {
-        return WIDTH;
+    public void render(ShapeRenderer s) {
+        s.rect(x, y, width, height);
     }
 }
