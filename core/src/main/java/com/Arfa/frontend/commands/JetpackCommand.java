@@ -2,8 +2,11 @@ package com.Arfa.frontend.commands;
 
 import com.Arfa.frontend.Player;
 
+/**
+ * Concrete command for jetpack action
+ */
 public class JetpackCommand implements Command {
-    private final Player player;
+    private Player player;
 
     public JetpackCommand(Player player) {
         this.player = player;

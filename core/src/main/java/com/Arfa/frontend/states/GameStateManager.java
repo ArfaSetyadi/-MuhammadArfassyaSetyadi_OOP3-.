@@ -1,5 +1,7 @@
 package com.Arfa.frontend.states;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+
 import java.util.Stack;
 
 public class GameStateManager {
@@ -14,29 +16,19 @@ public class GameStateManager {
     }
 
     public void pop() {
-        if (!states.isEmpty()) {
-            GameState top = states.pop();
-            top.dispose();
-        }
+        states.pop().dispose();
     }
 
     public void set(GameState state) {
-        if (!states.isEmpty()) {
-            pop();
-        }
-        push(state);
+        states.pop().dispose();
+        states.push(state);
     }
 
     public void update(float delta) {
-        if (!states.isEmpty()) {
-            states.peek().update(delta);
-        }
+        states.peek().update(delta);
     }
 
-    public void render(com.badlogic.gdx.graphics.g2d.SpriteBatch batch) {
-        if (!states.isEmpty()) {
-            states.peek().render(batch);
-        }
+    public void render(SpriteBatch batch) {
+        states.peek().render(batch);
     }
 }
-

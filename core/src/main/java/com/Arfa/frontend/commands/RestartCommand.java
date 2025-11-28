@@ -3,9 +3,12 @@ package com.Arfa.frontend.commands;
 import com.Arfa.frontend.GameManager;
 import com.Arfa.frontend.Player;
 
+/**
+ * Concrete command for restarting the game
+ */
 public class RestartCommand implements Command {
-    private final Player player;
-    private final GameManager gameManager;
+    private Player player;
+    private GameManager gameManager;
 
     public RestartCommand(Player player, GameManager gameManager) {
         this.player = player;

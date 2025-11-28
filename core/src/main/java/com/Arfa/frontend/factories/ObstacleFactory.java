@@ -19,6 +19,7 @@ public class ObstacleFactory {
     private final Random random = new Random();
 
     public ObstacleFactory() {
+        // Register all possible creators permanently
         register(new VerticalLaserCreator());
         register(new HorizontalLaserCreator());
         register(new HomingMissileCreator());
@@ -28,11 +29,11 @@ public class ObstacleFactory {
         creators.put(creator.getName(), creator);
     }
 
-    public void setWeights(Map<String, Float> weights) {
+    public void setWeights(Map<String, Integer> weights) {
         weightedSelection.clear();
-        for (Map.Entry<String, Float> entry : weights.entrySet()) {
+        for (Map.Entry<String, Integer> entry : weights.entrySet()) {
             String name = entry.getKey();
-            int weight = Math.max(0, Math.round(entry.getValue()));
+            int weight = entry.getValue();
             if (creators.containsKey(name)) {
                 for (int i = 0; i < weight; i++) {
                     weightedSelection.add(creators.get(name));
@@ -41,12 +42,10 @@ public class ObstacleFactory {
         }
     }
 
-
     public BaseObstacle createRandomObstacle(float groundTopY, float spawnX, float playerHeight) {
         if (weightedSelection.isEmpty()) {
-            List<ObstacleCreator> fallback = new ArrayList<>(creators.values());
-            ObstacleCreator c = fallback.get(random.nextInt(fallback.size()));
-            return c.create(groundTopY, spawnX, playerHeight, random);
+            // Fallback or throw exception if no weights are set
+            return null;
         }
 
         ObstacleCreator creator = selectWeightedCreator();
@@ -54,7 +53,8 @@ public class ObstacleFactory {
     }
 
     private ObstacleCreator selectWeightedCreator() {
-        return weightedSelection.get(random.nextInt(weightedSelection.size()));
+        int randomIndex = random.nextInt(weightedSelection.size());
+        return weightedSelection.get(randomIndex);
     }
 
     public void releaseObstacle(BaseObstacle obstacle) {
@@ -84,3 +84,5 @@ public class ObstacleFactory {
         return new ArrayList<>(creators.keySet());
     }
 }
+
+
